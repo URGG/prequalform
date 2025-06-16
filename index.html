@@ -20,20 +20,20 @@
     }
 
     #language {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  font-size: 13px;
-  border-radius: 6px;
-  z-index: 1000;
-  cursor: pointer;
-  width: auto;
-  max-width: 130px;
-}
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+      z-index: 1000;
+      cursor: pointer;
+      width: auto;
+      max-width: 130px;
+    }
 
     #language:hover {
       background: #333;
@@ -191,6 +191,18 @@
         <label data-i18n="income">Monthly Income (before taxes)</label>
         <input type="number" name="monthly-income" required>
 
+        <label>Do you have a car payment(s)?</label>
+        <select name="car-payments" id="car-payments" onchange="toggleCarPayment()">
+          <option value="">Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
+        <div id="car-payment-amount" class="hidden">
+          <label>How much do you pay per month?</label>
+          <input type="number" name="car-payment-amount" />
+        </div>
+
         <label data-i18n="taxes_1099">Do you file taxes with a 1099?</label>
         <select name="uses-1099" onchange="handle1099Change(this)">
           <option value="">Select...</option>
@@ -280,6 +292,12 @@
     function handle1099Change(select) {
       const extraFields = document.getElementById("1099-fields");
       extraFields.classList.toggle("hidden", select.value !== "Yes");
+    }
+
+    function toggleCarPayment() {
+      const carPayment = document.getElementById("car-payments").value;
+      const section = document.getElementById("car-payment-amount");
+      section.classList.toggle("hidden", carPayment !== "Yes");
     }
   </script>
 
