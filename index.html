@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Prequalification | Hollywood Stars Realty</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0"></script>
   <style>
     * {
       margin: 0;
@@ -66,15 +67,9 @@
     }
 
     @keyframes glowLoop {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .logo {
@@ -147,6 +142,10 @@
     input:focus, select:focus, textarea:focus {
       border-color: #000;
       outline: none;
+    }
+
+    .autocomplete-container {
+      margin-bottom: 10px;
     }
 
     .hidden {
@@ -249,7 +248,13 @@
         <input type="tel" name="phone" required>
 
         <label data-i18n="address">Current Address</label>
-        <input type="text" name="address" required>
+          <input
+          type="text"
+          id="autocomplete"
+          name="address"
+          placeholder="Start typing your address..."
+          required
+          />
 
         <label data-i18n="credit_score">Estimated Credit Score</label>
         <select name="credit-score" required>
@@ -398,6 +403,22 @@
         gross_1099: "¿Ingreso mensual bruto?"
       }
     };
+
+    // Geoapify autocomplete logic
+    const autocomplete = new Geoapify.GeocoderAutocomplete(
+  document.getElementById("autocomplete"),
+  "f833bcff9ec241b8ba77ca8d12aff6b8",
+  {
+    placeholder: "Start typing your address...",
+    type: "street",
+    lang: "en",
+    bias: { countryCode: "us" }
+  }
+);
+
+autocomplete.on("select", (value) => {
+  document.getElementById("autocomplete").value = value.properties.formatted;
+})
   </script>
 </body>
 </html>
