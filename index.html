@@ -228,7 +228,9 @@
 
   <div class="container">
     <div class="sidebar">
-      <img src="LES Digital BC (1).png" alt="Leslie Singer">
+      <a href="https://ads4u.store/leslie-business-card/" target="_blank">
+        <img src="LES Digital BC (1).png" alt="Leslie Singer">
+      </a>
       <a href="mailto:lesliebhhs@gmail.com">Email Leslie</a>
       <a href="tel:15622216760">Call Leslie</a>
       <a href="https://ads4u.store/leslie-business-card/" target="_blank">Return to Digital Card</a>
@@ -248,13 +250,7 @@
         <input type="tel" name="phone" required>
 
         <label data-i18n="address">Current Address</label>
-          <input
-          type="text"
-          id="autocomplete"
-          name="address"
-          placeholder="Start typing your address..."
-          required
-          />
+        <input type="text" id="autocomplete" name="address" placeholder="Start typing your address..." required>
 
         <label data-i18n="credit_score">Estimated Credit Score</label>
         <select name="credit-score" required>
@@ -405,20 +401,27 @@
     };
 
     // Geoapify autocomplete logic
-    const autocomplete = new Geoapify.GeocoderAutocomplete(
-  document.getElementById("autocomplete"),
-  "f833bcff9ec241b8ba77ca8d12aff6b8",
-  {
-    placeholder: "Start typing your address...",
-    type: "street",
-    lang: "en",
-    bias: { countryCode: "us" }
-  }
-);
+    document.addEventListener("DOMContentLoaded", function () {
+      const autocompleteInput = document.getElementById("autocomplete");
+      if (autocompleteInput) {
+        const autocomplete = new Geoapify.GeocoderAutocomplete(
+          autocompleteInput,
+          "f833bcff9ec241b8ba77ca8d12aff6b8",
+          {
+            placeholder: "Start typing your address...",
+            type: "street",
+            lang: "en",
+            bias: { countryCode: "us" }
+          }
+        );
 
-autocomplete.on("select", (value) => {
-  document.getElementById("autocomplete").value = value.properties.formatted;
-})
+        autocomplete.on("select", (value) => {
+          if (value && value.properties && value.properties.formatted) {
+            autocompleteInput.value = value.properties.formatted;
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
