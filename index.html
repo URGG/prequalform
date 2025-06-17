@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Prequalification | Hollywood Stars Realty</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -14,34 +14,73 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #ffffff;
+      background: linear-gradient(to bottom right, #fff, #f1f1f1);
       color: #000;
       padding: 20px;
+      transition: background 0.5s ease;
     }
 
-    #language {
+    .lang-wrapper {
       position: fixed;
       top: 16px;
       right: 16px;
-      background: #000;
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      font-size: 13px;
-      border-radius: 6px;
       z-index: 1000;
-      cursor: pointer;
-      width: auto;
-      max-width: 130px;
     }
 
-    #language:hover {
-      background: #333;
+    #language {
+      position: relative;
+      background: #000;
+      color: #fff;
+      padding: 6px 12px;
+      font-size: 13px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      appearance: none;
+      font-weight: 500;
+      z-index: 1;
+    }
+
+    .lang-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-radius: 12px;
+      background: linear-gradient(
+        270deg,
+        #ff0000,
+        #ff9900,
+        #33cc33,
+        #0099ff,
+        #cc00ff,
+        #ff0000
+      );
+      background-size: 600% 600%;
+      animation: glowLoop 6s linear infinite;
+      filter: blur(6px);
+      z-index: -1;
+      opacity: 0.8;
+    }
+
+    @keyframes glowLoop {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     .logo {
       text-align: center;
       margin-bottom: 20px;
+      animation: fadeIn 1s ease-in-out;
     }
 
     .logo img {
@@ -51,13 +90,14 @@
     .container {
       max-width: 1000px;
       margin: auto;
-      background: #f5f5f5;
+      background: #fff;
       border-radius: 12px;
       padding: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-wrap: wrap;
       gap: 30px;
+      animation: slideUp 0.7s ease;
     }
 
     .sidebar {
@@ -114,20 +154,58 @@
     }
 
     button[type="submit"] {
-      width: fit-content;
       background: #000;
       color: #fff;
       padding: 12px 24px;
       border-radius: 6px;
       font-weight: bold;
       border: none;
-      margin-top: 10px;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: background 0.3s ease;
     }
 
     button[type="submit"]:hover {
       background: #222;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #000;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 2000;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .popup .close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .popup a {
+      color: #fff;
+      text-decoration: underline;
+      display: block;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     @media screen and (max-width: 768px) {
@@ -138,11 +216,12 @@
   </style>
 </head>
 <body>
-
-  <select id="language" onchange="translatePage()">
-    <option value="en">English</option>
-    <option value="es">Español</option>
-  </select>
+  <div class="lang-wrapper">
+    <select id="language" onchange="translatePage()">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
 
   <div class="logo">
     <img src="logo.jpg" alt="Hollywood Stars Realty Logo">
@@ -153,11 +232,11 @@
       <img src="LES Digital BC (1).png" alt="Leslie Singer">
       <a href="mailto:lesliebhhs@gmail.com">Email Leslie</a>
       <a href="tel:15622216760">Call Leslie</a>
-      <a href="https://www.wecanhelp.house" target="_blank">Visit WeCanHelp.house</a>
+      <a href="https://ads4u.store/leslie-business-card/" target="_blank">Return to Digital Card</a>
     </div>
 
     <div class="form-section">
-      <form name="prequal-form" method="POST" data-netlify="true">
+      <form name="prequal-form" method="POST" data-netlify="true" onsubmit="handleSubmit(event)">
         <input type="hidden" name="form-name" value="prequal-form">
 
         <label data-i18n="full_name">Full Name</label>
@@ -200,7 +279,7 @@
 
         <div id="car-payment-amount" class="hidden">
           <label>How much do you pay per month?</label>
-          <input type="number" name="car-payment-amount" />
+          <input type="number" name="car-payment-amount">
         </div>
 
         <label data-i18n="taxes_1099">Do you file taxes with a 1099?</label>
@@ -211,14 +290,14 @@
         </select>
 
         <div id="1099-fields" class="hidden">
-          <label data-i18n="net_1099">What is your monthly income after taxes (net)?</label>
+          <label data-i18n="net_1099">Monthly income after taxes (net)?</label>
           <input type="number" name="net-income-after-1099">
 
-          <label data-i18n="gross_1099">What is your gross monthly income?</label>
+          <label data-i18n="gross_1099">Gross monthly income?</label>
           <input type="number" name="gross-income-1099">
         </div>
 
-        <label data-i18n="debts">Do you have any outstanding debts?</label>
+        <label data-i18n="debts">Any outstanding debts?</label>
         <textarea name="debts" rows="3"></textarea>
 
         <label data-i18n="down_payment">Estimated Down Payment</label>
@@ -235,12 +314,54 @@
         <label data-i18n="additional_info">Any additional info you'd like to share?</label>
         <textarea name="additional-info" rows="3"></textarea>
 
+        <div data-netlify-recaptcha="true"></div>
+
         <button type="submit" data-i18n="submit">Submit Prequalification</button>
       </form>
     </div>
   </div>
 
+  <div class="popup" id="popup">
+    <span class="close" onclick="document.getElementById('popup').style.display='none'">&times;</span>
+    <p>Thank you for your response! An agent will contact you within 1–3 business days.</p>
+    <a href="https://ads4u.store/leslie-business-card/">Return to Digital Card</a>
+  </div>
+
   <script>
+    function toggleCarPayment() {
+      const value = document.getElementById('car-payments').value;
+      document.getElementById('car-payment-amount').classList.toggle('hidden', value !== 'Yes');
+    }
+
+    function handle1099Change(select) {
+      document.getElementById('1099-fields').classList.toggle('hidden', select.value !== 'Yes');
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const form = event.target;
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString()
+      })
+      .then(() => {
+        document.getElementById('popup').style.display = 'block';
+        form.reset();
+      })
+      .catch(error => alert('Form submission error: ' + error));
+    }
+
+    function translatePage() {
+      const lang = document.getElementById("language").value;
+      const elements = document.querySelectorAll("[data-i18n]");
+      const t = translations[lang] || translations.en;
+      elements.forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+    }
+
     const translations = {
       en: {
         full_name: "Full Name",
@@ -250,14 +371,14 @@
         credit_score: "Estimated Credit Score",
         employment: "Are you currently employed?",
         income: "Monthly Income (before taxes)",
-        debts: "Do you have any outstanding debts?",
+        debts: "Any outstanding debts?",
         down_payment: "Estimated Down Payment",
         ssn_itin: "Do you have a SSN, ITIN, or other?",
         additional_info: "Any additional info you'd like to share?",
         submit: "Submit Prequalification",
         taxes_1099: "Do you file taxes with a 1099?",
-        net_1099: "What is your monthly income after taxes (net)?",
-        gross_1099: "What is your gross monthly income?"
+        net_1099: "Monthly income after taxes (net)?",
+        gross_1099: "Gross monthly income?"
       },
       es: {
         full_name: "Nombre completo",
@@ -273,33 +394,10 @@
         additional_info: "¿Información adicional que deseas compartir?",
         submit: "Enviar pre-calificación",
         taxes_1099: "¿Presentas impuestos con un 1099?",
-        net_1099: "¿Cuál es tu ingreso mensual neto (después de impuestos)?",
-        gross_1099: "¿Cuál es tu ingreso mensual bruto?"
+        net_1099: "¿Ingreso mensual neto?",
+        gross_1099: "¿Ingreso mensual bruto?"
       }
     };
-
-    function translatePage() {
-      const lang = document.getElementById("language").value;
-      const elements = document.querySelectorAll("[data-i18n]");
-      elements.forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (translations[lang] && translations[lang][key]) {
-          el.textContent = translations[lang][key];
-        }
-      });
-    }
-
-    function handle1099Change(select) {
-      const extraFields = document.getElementById("1099-fields");
-      extraFields.classList.toggle("hidden", select.value !== "Yes");
-    }
-
-    function toggleCarPayment() {
-      const carPayment = document.getElementById("car-payments").value;
-      const section = document.getElementById("car-payment-amount");
-      section.classList.toggle("hidden", carPayment !== "Yes");
-    }
   </script>
-
 </body>
 </html>
