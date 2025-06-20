@@ -7,17 +7,7 @@
   <meta name="description" content="Submit your prequalification form for Hollywood Stars Realty. Fast, secure, and easy to use." />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Load Geoapify Autocomplete library (browser version) -->
-  
-  
-
-    <!-- ✅ FIXED: Load Geoapify correctly -->
-  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete/styles/minimal.css" />
-   
-  
-  
-
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -269,6 +259,8 @@
     <a href="https://ads4u.store/leslie-business-card/">Return to Digital Card</a>
   </div>
 
+  <!-- ✅ Load Geoapify script deferred -->
+  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js" defer></script>
   <script>
     function toggleCarPayment() {
       document.getElementById('car-payment-amount').classList.toggle('hidden', document.getElementById('car-payments').value !== 'Yes');
@@ -340,33 +332,29 @@
       }
     };
 
+    window.addEventListener("load", function () {
+      const input = document.getElementById("autocomplete");
+      if (input && window.Geoapify?.GeocoderAutocomplete) {
+        const autocomplete = new window.Geoapify.GeocoderAutocomplete(
+          input,
+          "f833bcff9ec241b8ba77ca8d12aff6b8",
+          {
+            placeholder: "Start typing your address...",
+            type: "street",
+            lang: "en",
+            bias: { countryCode: "us" }
+          }
+        );
 
-  document.addEventListener("DOMContentLoaded", function () {
-  const autocompleteInput = document.getElementById("autocomplete");
-
-  if (autocompleteInput && window.Geoapify?.GeocoderAutocomplete) {
-    const autocomplete = new window.Geoapify.GeocoderAutocomplete(
-      autocompleteInput,
-      "f833bcff9ec241b8ba77ca8d12aff6b8",
-      {
-        placeholder: "Start typing your address...",
-        type: "street",
-        lang: "en",
-        bias: { countryCode: "us" }
-      }
-    );
-
-    autocomplete.on("select", (value) => {
-      if (value?.properties?.formatted) {
-        autocompleteInput.value = value.properties.formatted;
+        autocomplete.on("select", (value) => {
+          if (value?.properties?.formatted) {
+            input.value = value.properties.formatted;
+          }
+        });
+      } else {
+        console.error("Geoapify Autocomplete failed to load.");
       }
     });
-  } else {
-    console.error("Geoapify autocomplete failed to load.");
-  }
-});
-</script>
-
-  
+  </script>
 </body>
 </html>
