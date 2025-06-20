@@ -8,10 +8,9 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-  <script
-  id="geoapifyScript"
-  src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js"
-></script>
+  <!-- Load Geoapify Autocomplete -->
+  <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete/styles/minimal.css" />
+  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -338,9 +337,11 @@
     };
 
     
-  function initGeoapifyAutocomplete() {
+    
+  document.addEventListener("DOMContentLoaded", function () {
     const autocompleteInput = document.getElementById("autocomplete");
-    if (!autocompleteInput || !window.Geoapify?.GeocoderAutocomplete) {
+
+    if (!autocompleteInput || typeof Geoapify === "undefined" || typeof Geoapify.GeocoderAutocomplete === "undefined") {
       console.error("Geoapify Autocomplete failed to load.");
       return;
     }
@@ -361,13 +362,8 @@
         autocompleteInput.value = value.properties.formatted;
       }
     });
-  }
-
-  // ✅ Wait until Geoapify script is loaded
-  const geoScript = document.getElementById("geoapifyScript");
-  geoScript.addEventListener("load", () => {
-    document.addEventListener("DOMContentLoaded", initGeoapifyAutocomplete);
   });
+</script>
 </script>
   
 </body>
