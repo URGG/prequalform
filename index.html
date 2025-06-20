@@ -9,13 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <!-- Load Geoapify Autocomplete library (browser version) -->
   
-  <head>
-    ...
+  
+
     <!-- ✅ FIXED: Load Geoapify correctly -->
-    <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete/styles/minimal.css" />
-    ...
-  </head>
+  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete/styles/minimal.css" />
+   
+  
   
 
   <style>
@@ -342,29 +342,28 @@
 
 
     document.addEventListener("DOMContentLoaded", function () {
-  const autocompleteInput = document.getElementById("autocomplete");
-  if (autocompleteInput) {
-    const autocomplete = new Geoapify.GeocoderAutocomplete(
-      autocompleteInput,
-      "f833bcff9ec241b8ba77ca8d12aff6b8", // your key
-      {
-        placeholder: "Start typing your address...",
-        type: "street",
-        lang: "en",
-        bias: { countryCode: "us" }
-      }
-    );
+    const autocompleteInput = document.getElementById("autocomplete");
+    if (autocompleteInput) {
+      const autocomplete = new Geoapify.GeocoderAutocomplete(
+        autocompleteInput,
+        "f833bcff9ec241b8ba77ca8d12aff6b8",
+        {
+          placeholder: "Start typing your address...",
+          type: "street",
+          lang: "en",
+          bias: { countryCode: "us" }
+        }
+      );
 
-    autocomplete.on("select", (value) => {
-      if (value?.properties?.formatted) {
-        autocompleteInput.value = value.properties.formatted;
-      }
-    });
-  }
-});
-
+      autocomplete.on("select", (value) => {
+        if (value?.properties?.formatted) {
+          autocompleteInput.value = value.properties.formatted;
+        }
+      });
+    }
+  });
 </script>
 
-  </script>
+  
 </body>
 </html>
