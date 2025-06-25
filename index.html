@@ -9,8 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- Load Geoapify Autocomplete -->
-  <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete/styles/minimal.css" />
-  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.2.0/dist/bundle.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@geoapify/geocoder-autocomplete@1.6.0/styles/minimal.css" />
+  <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@1.6.0/dist/index.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -107,6 +108,23 @@
       outline: none;
     }
     .hidden { display: none; }
+
+    .debt-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .debt-checkbox {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .debt-checkbox input[type="checkbox"] {
+      width: auto;
+    }
     button[type="submit"] {
       background: #000;
       color: #fff;
@@ -144,6 +162,34 @@
     }
     @media screen and (max-width: 768px) {
       .container { flex-direction: column; }
+      .debt-row { grid-template-columns: 1fr; }
+    }
+
+    /* Geoapify autocomplete styling */
+    .geoapify-autocomplete-container {
+      position: relative;
+    }
+    .geoapify-autocomplete-items {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .geoapify-autocomplete-item {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+    .geoapify-autocomplete-item:hover,
+    .geoapify-autocomplete-item.geoapify-autocomplete-item-active {
+      background-color: #f5f5f5;
     }
   </style>
 </head>
@@ -172,11 +218,10 @@
     <div class="form-section">
       <form name="prequal-form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
         <input type="hidden" name="form-name" value="prequal-form">
-        <p class="hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
+        <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
 
         <label for="name" data-i18n="full_name">Full Name</label>
         <input id="name" type="text" name="full-name" required>
-        
 
         <label for="email" data-i18n="email">Email Address</label>
         <input id="email" type="email" name="email" required>
@@ -184,16 +229,19 @@
         <label for="phone" data-i18n="phone">Phone Number</label>
         <input id="phone" type="tel" name="phone" required>
 
-        <label for="autocomplete" data-i18n="address">Current Address</label>
-        <input id="autocomplete" type="text" name="address" required>
+        <label for="address" data-i18n="address">Current Address</label>
+        <div class="geoapify-autocomplete-container">
+          <input id="address" type="text" name="address" required placeholder="Start typing your address...">
+        </div>
 
-        <label data-i18n="credit_score">Estimated Credit Score</label>
-        <select name="credit-score" required>
+        <label data-i18n="fico_score">Estimated FICO Score</label>
+        <select name="fico-score" required>
           <option value="">Select...</option>
-          <option>Excellent (750+)</option>
-          <option>Good (700-749)</option>
-          <option>Fair (650-699)</option>
-          <option>Poor (Below 650)</option>
+          <option>Excellent (800-850)</option>
+          <option>Very Good (740-799)</option>
+          <option>Good (670-739)</option>
+          <option>Fair (580-669)</option>
+          <option>Poor (300-579)</option>
         </select>
 
         <label data-i18n="employment">Are you currently employed?</label>
@@ -203,8 +251,8 @@
           <option>No</option>
         </select>
 
-        <label data-i18n="income">Monthly Income (before taxes)</label>
-        <input type="number" name="monthly-income" required>
+        <label data-i18n="monthly_income">Estimated Monthly Income (before taxes)</label>
+        <input type="number" name="monthly-income" required placeholder="Enter amount in dollars">
 
         <label>Do you have a car payment(s)?</label>
         <select name="car-payments" id="car-payments" onchange="toggleCarPayment()">
@@ -215,7 +263,7 @@
 
         <div id="car-payment-amount" class="hidden">
           <label>How much do you pay per month?</label>
-          <input type="number" name="car-payment-amount">
+          <input type="number" name="car-payment-amount" placeholder="Enter monthly car payment">
         </div>
 
         <label data-i18n="taxes_1099">Do you file taxes with a 1099?</label>
@@ -227,17 +275,14 @@
 
         <div id="1099-fields" class="hidden">
           <label data-i18n="net_1099">Monthly income after taxes (net)?</label>
-          <input type="number" name="net-income-after-1099">
+          <input type="number" name="net-income-after-1099" placeholder="Enter net monthly income">
 
           <label data-i18n="gross_1099">Gross monthly income?</label>
-          <input type="number" name="gross-income-1099">
+          <input type="number" name="gross-income-1099" placeholder="Enter gross monthly income">
         </div>
 
-        <label data-i18n="debts">Any outstanding debts?</label>
-        <textarea name="debts" rows="3"></textarea>
-
         <label data-i18n="down_payment">Estimated Down Payment</label>
-        <input type="number" name="down-payment">
+        <input type="number" name="down-payment" placeholder="Enter estimated down payment amount">
 
         <label data-i18n="ssn_itin">Do you have a SSN, ITIN, or other?</label>
         <select name="id-status" required>
@@ -248,7 +293,54 @@
         </select>
 
         <label data-i18n="additional_info">Any additional info you'd like to share?</label>
-        <textarea name="additional-info" rows="3"></textarea>
+        <textarea name="additional-info" rows="3" placeholder="Share any additional information that might be helpful..."></textarea>
+
+        <label data-i18n="debts_header">Estimated Debts and Monthly Payments</label>
+        
+        <div class="debt-checkbox">
+          <input type="checkbox" id="has-mortgage" name="has-mortgage" onchange="toggleDebt('mortgage')">
+          <label for="has-mortgage" data-i18n="mortgage">Mortgage</label>
+        </div>
+        <div id="mortgage-fields" class="debt-row hidden">
+          <input type="number" name="mortgage-balance" placeholder="Remaining balance">
+          <input type="number" name="mortgage-payment" placeholder="Monthly payment">
+        </div>
+
+        <div class="debt-checkbox">
+          <input type="checkbox" id="has-credit-cards" name="has-credit-cards" onchange="toggleDebt('credit-cards')">
+          <label for="has-credit-cards" data-i18n="credit_cards">Credit Cards</label>
+        </div>
+        <div id="credit-cards-fields" class="debt-row hidden">
+          <input type="number" name="credit-cards-balance" placeholder="Total balance">
+          <input type="number" name="credit-cards-payment" placeholder="Monthly payment">
+        </div>
+
+        <div class="debt-checkbox">
+          <input type="checkbox" id="has-auto-loans" name="has-auto-loans" onchange="toggleDebt('auto-loans')">
+          <label for="has-auto-loans" data-i18n="auto_loans">Auto Loans</label>
+        </div>
+        <div id="auto-loans-fields" class="debt-row hidden">
+          <input type="number" name="auto-loans-balance" placeholder="Remaining balance">
+          <input type="number" name="auto-loans-payment" placeholder="Monthly payment">
+        </div>
+
+        <div class="debt-checkbox">
+          <input type="checkbox" id="has-student-loans" name="has-student-loans" onchange="toggleDebt('student-loans')">
+          <label for="has-student-loans" data-i18n="student_loans">Student Loans</label>
+        </div>
+        <div id="student-loans-fields" class="debt-row hidden">
+          <input type="number" name="student-loans-balance" placeholder="Remaining balance">
+          <input type="number" name="student-loans-payment" placeholder="Monthly payment">
+        </div>
+
+        <div class="debt-checkbox">
+          <input type="checkbox" id="has-personal-loans" name="has-personal-loans" onchange="toggleDebt('personal-loans')">
+          <label for="has-personal-loans" data-i18n="personal_loans">Personal Loans</label>
+        </div>
+        <div id="personal-loans-fields" class="debt-row hidden">
+          <input type="number" name="personal-loans-balance" placeholder="Remaining balance">
+          <input type="number" name="personal-loans-payment" placeholder="Monthly payment">
+        </div>
 
         <div data-netlify-recaptcha="true"></div>
 
@@ -263,8 +355,6 @@
     <a href="https://ads4u.store/leslie-business-card/">Return to Digital Card</a>
   </div>
 
-  <!-- ✅ Load Geoapify script deferred -->
-
   <script>
     function toggleCarPayment() {
       document.getElementById('car-payment-amount').classList.toggle('hidden', document.getElementById('car-payments').value !== 'Yes');
@@ -272,6 +362,12 @@
 
     function handle1099Change(select) {
       document.getElementById('1099-fields').classList.toggle('hidden', select.value !== 'Yes');
+    }
+
+    function toggleDebt(debtType) {
+      const checkbox = document.getElementById(`has-${debtType}`);
+      const fields = document.getElementById(`${debtType}-fields`);
+      fields.classList.toggle('hidden', !checkbox.checked);
     }
 
     function handleSubmit(event) {
@@ -305,10 +401,15 @@
         email: "Email Address",
         phone: "Phone Number",
         address: "Current Address",
-        credit_score: "Estimated Credit Score",
+        fico_score: "Estimated FICO Score",
         employment: "Are you currently employed?",
-        income: "Monthly Income (before taxes)",
-        debts: "Any outstanding debts?",
+        monthly_income: "Estimated Monthly Income (before taxes)",
+        debts_header: "Estimated Debts and Monthly Payments",
+        mortgage: "Mortgage",
+        credit_cards: "Credit Cards",
+        auto_loans: "Auto Loans",
+        student_loans: "Student Loans",
+        personal_loans: "Personal Loans",
         down_payment: "Estimated Down Payment",
         ssn_itin: "Do you have a SSN, ITIN, or other?",
         additional_info: "Any additional info you'd like to share?",
@@ -322,10 +423,15 @@
         email: "Correo electrónico",
         phone: "Número de teléfono",
         address: "Dirección actual",
-        credit_score: "Puntaje de crédito estimado",
+        fico_score: "Puntaje FICO estimado",
         employment: "¿Actualmente estás empleado?",
-        income: "Ingreso mensual (antes de impuestos)",
-        debts: "¿Tienes deudas pendientes?",
+        monthly_income: "Ingreso mensual estimado (antes de impuestos)",
+        debts_header: "Deudas estimadas y pagos mensuales",
+        mortgage: "Hipoteca",
+        credit_cards: "Tarjetas de crédito",
+        auto_loans: "Préstamos de auto",
+        student_loans: "Préstamos estudiantiles",
+        personal_loans: "Préstamos personales",
         down_payment: "Pago inicial estimado",
         ssn_itin: "¿Tienes SSN, ITIN u otro?",
         additional_info: "¿Información adicional que deseas compartir?",
@@ -336,35 +442,33 @@
       }
     };
 
-    
-    
-  document.addEventListener("DOMContentLoaded", function () {
-    const autocompleteInput = document.getElementById("autocomplete");
+    // Initialize Geoapify Autocomplete
+    document.addEventListener("DOMContentLoaded", function () {
+      const addressInput = document.getElementById("address");
+      
+      if (typeof GeoapifyGeocoderAutocomplete !== 'undefined') {
+        const autocomplete = new GeoapifyGeocoderAutocomplete(
+          addressInput,
+          "f833bcff9ec241b8ba77ca8d12aff6b8", // Your API key
+          {
+            placeholder: "Start typing your address...",
+            type: "street",
+            lang: "en",
+            countryCodes: ["us"],
+            limit: 5
+          }
+        );
 
-    if (!autocompleteInput || typeof Geoapify === "undefined" || typeof Geoapify.GeocoderAutocomplete === "undefined") {
-      console.error("Geoapify Autocomplete failed to load.");
-      return;
-    }
-
-    const autocomplete = new Geoapify.GeocoderAutocomplete(
-      autocompleteInput,
-      "f833bcff9ec241b8ba77ca8d12aff6b8",
-      {
-        placeholder: "Start typing your address...",
-        type: "street",
-        lang: "en",
-        bias: { countryCode: "us" }
-      }
-    );
-
-    autocomplete.on("select", (value) => {
-      if (value?.properties?.formatted) {
-        autocompleteInput.value = value.properties.formatted;
+        autocomplete.on('select', (location) => {
+          console.log('Selected location:', location);
+          if (location && location.properties && location.properties.formatted) {
+            addressInput.value = location.properties.formatted;
+          }
+        });
+      } else {
+        console.warn('Geoapify Autocomplete library not loaded. Address autocomplete will not work.');
       }
     });
-  });
-</script>
-</script>
-  
+  </script>
 </body>
 </html>
